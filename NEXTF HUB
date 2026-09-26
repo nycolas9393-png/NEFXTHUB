@@ -142,14 +142,14 @@ local COLOR_CARD = Color3.fromRGB(22, 24, 32)
 local COLOR_TEXT = Color3.fromRGB(240, 242, 250)
 local COLOR_SUBTEXT = Color3.fromRGB(110, 115, 130)
 
-local COLOR_GREEN = Color3.fromRGB(58, 145, 239)
-local COLOR_GREEN_BORDER = Color3.fromRGB(92, 163, 240)
-local COLOR_OFF = Color3.fromRGB(18, 29, 54)
-local COLOR_OFF_BORDER = Color3.fromRGB(48, 67, 98)
+local COLOR_GREEN = Color3.fromRGB(235, 55, 65)
+local COLOR_GREEN_BORDER = Color3.fromRGB(255, 95, 105)
+local COLOR_OFF = Color3.fromRGB(42, 16, 20)
+local COLOR_OFF_BORDER = Color3.fromRGB(92, 35, 43)
 
-local COLOR_RED = Color3.fromRGB(58, 145, 239)
-local COLOR_BLUE = Color3.fromRGB(58, 145, 239)
-local COLOR_ACCENT = Color3.fromRGB(58, 145, 239)
+local COLOR_RED = Color3.fromRGB(235, 55, 65)
+local COLOR_BLUE = Color3.fromRGB(235, 55, 65)
+local COLOR_ACCENT = Color3.fromRGB(235, 55, 65)
 
 local FONT_MAIN = Enum.Font.GothamBold
 local FONT_REGULAR = Enum.Font.GothamMedium
@@ -164,16 +164,16 @@ local COLORS_APEX = {
     Gray = Color3.fromRGB(155, 155, 165),
     DarkGray = Color3.fromRGB(75, 75, 85),
     Black = Color3.fromRGB(0, 0, 0),
-    Green = Color3.fromRGB(58, 145, 239),
-    Red = Color3.fromRGB(58, 145, 239),
-    Blue = Color3.fromRGB(58, 145, 239),
-    DarkBlue = Color3.fromRGB(20, 36, 68),
+    Green = Color3.fromRGB(235, 55, 65),
+    Red = Color3.fromRGB(235, 55, 65),
+    Blue = Color3.fromRGB(235, 55, 65),
+    DarkBlue = Color3.fromRGB(54, 16, 22),
 }
 
 -- COR VERMELHA PARA O NEXT BASE
 local NEXT_BASE_CUSTOM_COLOR = COLOR_RED
-local SLOT_CUSTOM_COLOR = Color3.fromRGB(45, 150, 255)
-local PLATFORM_CUSTOM_COLOR = Color3.fromRGB(58, 145, 239)
+local SLOT_CUSTOM_COLOR = Color3.fromRGB(235, 55, 65)
+local PLATFORM_CUSTOM_COLOR = Color3.fromRGB(235, 55, 65)
 
 -- ============================================================
 -- LIMPEZA DE NOTIFICAÇÕES ANTIGAS
@@ -568,7 +568,7 @@ end
 -- SLOT / PODIUM ESP
 -- ============================================================
 
-local PODIUM_MARKER_COLOR = Color3.fromRGB(45, 150, 255)
+local PODIUM_MARKER_COLOR = Color3.fromRGB(245, 55, 65)
 local PODIUM_SHOW_DISTANCE = 70
 local podiumVisibilityConnection = nil
 local podiumSelections = {}
@@ -638,7 +638,12 @@ local function updatePodiumVisibility()
     for _, selection in ipairs(podiumSelections) do
         if selection and selection.Parent then
             local markerBase = selection:GetAttribute("SammyBaseIndex")
-            selection.Visible = show and markerBase == nearestBase
+            local visible = show and markerBase == nearestBase
+            if selection:IsA("Highlight") then
+                selection.Enabled = visible
+            else
+                selection.Visible = visible
+            end
         end
     end
 end
@@ -682,14 +687,28 @@ local function newSlotESP()
         part:SetAttribute("SammyBaseIndex", baseIndex or -1)
         keep(part)
 
+        -- Red premium marker: subtle fill + crisp outline, without covering the podium.
+        local highlight = Instance.new("Highlight")
+        highlight.Name = "SammyPodiumHighlight"
+        highlight.Adornee = part
+        highlight.FillColor = PODIUM_MARKER_COLOR
+        highlight.OutlineColor = Color3.fromRGB(255, 105, 115)
+        highlight.FillTransparency = 0.92
+        highlight.OutlineTransparency = 0.02
+        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+        highlight.Enabled = false
+        highlight:SetAttribute("SammyBaseIndex", baseIndex or -1)
+        podiumSelections[#podiumSelections + 1] = highlight
+        keep(highlight)
+
         local selection = Instance.new("SelectionBox")
         selection.Name = "SammyPodiumOutline"
         selection.Adornee = part
         selection.Color3 = PODIUM_MARKER_COLOR
         selection.SurfaceColor3 = PODIUM_MARKER_COLOR
-        selection.LineThickness = 0.045
+        selection.LineThickness = 0.065
         selection.Transparency = 0
-        selection.SurfaceTransparency = 1
+        selection.SurfaceTransparency = 0.98
         selection.Visible = false
         selection:SetAttribute("SammyBaseIndex", baseIndex or -1)
         podiumSelections[#podiumSelections + 1] = selection
@@ -3043,19 +3062,82 @@ end
 -- INTERFACE REWORK — GEAR & SAFETY + TARGET CONTROLS
 -- ============================================================
 
-UI_PURPLE = Color3.fromRGB(58, 145, 239)
-UI_PURPLE_DARK = Color3.fromRGB(20, 36, 68)
-UI_PURPLE_BORDER = Color3.fromRGB(64, 125, 205)
-UI_GREEN = Color3.fromRGB(58, 145, 239)
-UI_GREEN_BORDER = Color3.fromRGB(92, 163, 240)
-UI_PANEL = Color3.fromRGB(9, 18, 38)
-UI_ROW = Color3.fromRGB(17, 29, 55)
+UI_PURPLE = Color3.fromRGB(225, 45, 58)
+UI_PURPLE_DARK = Color3.fromRGB(78, 20, 27)
+UI_PURPLE_BORDER = Color3.fromRGB(255, 78, 92)
+UI_GREEN = Color3.fromRGB(225, 45, 58)
+UI_GREEN_BORDER = Color3.fromRGB(255, 92, 105)
+UI_PANEL = Color3.fromRGB(22, 10, 13)
+UI_ROW = Color3.fromRGB(38, 15, 19)
 UI_WHITE = Color3.fromRGB(242, 246, 255)
 UI_MUTED = Color3.fromRGB(157, 166, 190)
-UI_OFF = Color3.fromRGB(18, 29, 54)
+UI_OFF = Color3.fromRGB(42, 16, 20)
 
 screenGui.ResetOnSpawn = false
 screenGui.IgnoreGuiInset = true
+
+-- ============================================================
+-- MOBILE / DELTA SCALE
+-- Allows the whole menu to become smaller on touch devices.
+-- Delta button cycles: 100% -> 90% -> 80% -> 100%.
+-- ============================================================
+local menuScale = Instance.new("UIScale")
+menuScale.Name = "MobileMenuScale"
+menuScale.Scale = UserInputService.TouchEnabled and 0.86 or 1
+menuScale.Parent = screenGui
+
+local deltaButton = Instance.new("TextButton")
+deltaButton.Name = "DeltaScaleButton"
+deltaButton.Size = UDim2.fromOffset(58, 24)
+deltaButton.Position = UDim2.new(1, -70, 0, 12)
+deltaButton.BackgroundColor3 = Color3.fromRGB(42, 12, 16)
+deltaButton.AutoButtonColor = false
+deltaButton.Text = "DELTA 86%"
+deltaButton.TextColor3 = Color3.fromRGB(255, 238, 240)
+deltaButton.Font = Enum.Font.GothamBold
+deltaButton.TextSize = 8
+deltaButton.ZIndex = 1000
+deltaButton.Parent = screenGui
+
+local deltaCorner = Instance.new("UICorner")
+deltaCorner.CornerRadius = UDim.new(0, 9)
+deltaCorner.Parent = deltaButton
+
+local deltaStroke = Instance.new("UIStroke")
+deltaStroke.Color = Color3.fromRGB(255, 70, 85)
+deltaStroke.Thickness = 1.2
+deltaStroke.Transparency = 0.1
+deltaStroke.Parent = deltaButton
+
+local deltaScale = UserInputService.TouchEnabled and 0.86 or 1
+local deltaValues = {1, 0.90, 0.80, 0.86}
+local deltaIndex = UserInputService.TouchEnabled and 4 or 1
+
+local function refreshDeltaButton()
+    local percent = math.floor(deltaScale * 100 + 0.5)
+    deltaButton.Text = "DELTA " .. tostring(percent) .. "%"
+end
+
+deltaButton.MouseButton1Click:Connect(function()
+    deltaIndex = (deltaIndex % #deltaValues) + 1
+    deltaScale = deltaValues[deltaIndex]
+    menuScale.Scale = deltaScale
+    refreshDeltaButton()
+end)
+
+deltaButton.MouseEnter:Connect(function()
+    TweenService:Create(deltaButton, TweenInfo.new(0.12), {
+        BackgroundColor3 = Color3.fromRGB(72, 18, 25)
+    }):Play()
+end)
+
+deltaButton.MouseLeave:Connect(function()
+    TweenService:Create(deltaButton, TweenInfo.new(0.12), {
+        BackgroundColor3 = Color3.fromRGB(42, 12, 16)
+    }):Play()
+end)
+
+refreshDeltaButton()
 
 -- All UI instances are stored in one table so the main chunk does not
 -- accumulate hundreds of local registers (avoids "exceeded limit 200").
@@ -3235,7 +3317,7 @@ U.gearTitle.Font = FONT_MAIN
 U.gearTitle.Text = "GEAR & SAFETY"
 U.gearTitle.TextColor3 = UI_WHITE
 U.gearTitle.TextSize = 12
-U.gearTitle.TextStrokeColor3 = Color3.fromRGB(92, 163, 240)
+U.gearTitle.TextStrokeColor3 = Color3.fromRGB(255, 92, 105)
 U.gearTitle.TextStrokeTransparency = 0.25
 U.gearTitle.ZIndex = 101
 U.gearTitle.Parent = U.gear
@@ -3254,7 +3336,7 @@ gac.Parent = U.gearAccent
 U.gearDivider = Instance.new("Frame")
 U.gearDivider.Size = UDim2.new(1,-24,0,1)
 U.gearDivider.Position = UDim2.fromOffset(12,29)
-U.gearDivider.BackgroundColor3 = Color3.fromRGB(92, 163, 240)
+U.gearDivider.BackgroundColor3 = Color3.fromRGB(255, 92, 105)
 U.gearDivider.BackgroundTransparency = 0.45
 U.gearDivider.BorderSizePixel = 0
 U.gearDivider.ZIndex = 101
@@ -3531,7 +3613,7 @@ local esfNoCorner = Instance.new("UICorner")
 esfNoCorner.CornerRadius = UDim.new(0, 9)
 esfNoCorner.Parent = U.esfNo
 local esfNoStroke = Instance.new("UIStroke")
-esfNoStroke.Color = Color3.fromRGB(48, 67, 98)
+esfNoStroke.Color = Color3.fromRGB(88, 34, 42)
 esfNoStroke.Thickness = 1
 esfNoStroke.Parent = U.esfNo
 
@@ -3542,7 +3624,7 @@ local function esfSet(titleText, subText, buttonText, enabled, showNo)
     U.esfAction.Active = enabled ~= false
     U.esfAction.AutoButtonColor = false
     U.esfAction.BackgroundColor3 = (enabled == false) and UI_OFF or UI_PURPLE
-    esfActionStroke.Color = (enabled == false) and Color3.fromRGB(48, 67, 98) or UI_PURPLE_BORDER
+    esfActionStroke.Color = (enabled == false) and Color3.fromRGB(88, 34, 42) or UI_PURPLE_BORDER
     U.esfNo.Visible = showNo == true
     if showNo then
         U.esfAction.Size = UDim2.new(0.5, -4, 0, 34)
@@ -3822,15 +3904,15 @@ local COLORS = {
 }
 
 -- DARK GRAB INSTA THEME
-COLORS.Background = Color3.fromRGB(6, 13, 28)
-COLORS.Panel = Color3.fromRGB(9, 18, 38)
-COLORS.Panel2 = Color3.fromRGB(17, 29, 55)
-COLORS.Gray = Color3.fromRGB(178, 190, 205)
-COLORS.Gray2 = Color3.fromRGB(135, 143, 154)
+COLORS.Background = Color3.fromRGB(24, 8, 11)
+COLORS.Panel = Color3.fromRGB(30, 10, 14)
+COLORS.Panel2 = Color3.fromRGB(44, 14, 19)
+COLORS.Gray = Color3.fromRGB(220, 185, 190)
+COLORS.Gray2 = Color3.fromRGB(165, 125, 132)
 COLORS.DarkGray = Color3.fromRGB(45, 62, 92)
 COLORS.LightGray = Color3.fromRGB(72, 92, 126)
-local PURPLE = Color3.fromRGB(58, 145, 239)
-local PURPLE2 = Color3.fromRGB(20, 36, 68)
+local PURPLE = Color3.fromRGB(225, 45, 58)
+local PURPLE2 = Color3.fromRGB(60, 15, 22)
 
 
 -- ============================================================
@@ -3890,7 +3972,7 @@ end
 _G.__SaveNeptuneAutoGrabPosition = saveAutoGrabPosition
 
 mainFrame.Position = loadAutoGrabPosition(UDim2.new(1, -292, 0, 72))
-mainFrame.BackgroundColor3 = Color3.fromRGB(9, 18, 38)
+mainFrame.BackgroundColor3 = Color3.fromRGB(30, 10, 14)
 mainFrame.BackgroundTransparency = 0
 mainFrame.BorderSizePixel = 0
 mainFrame.Active = true
@@ -3916,9 +3998,9 @@ shadow.Parent = mainFrame
 
 local mainGradient = Instance.new("UIGradient")
 mainGradient.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 38, 72)),
-    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(9, 18, 38)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(6, 13, 28)),
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(64, 18, 25)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(30, 10, 14)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(24, 8, 11)),
 })
 mainGradient.Rotation = 0
 mainGradient.Parent = mainFrame
@@ -3931,7 +4013,7 @@ local accentLine = Instance.new("Frame")
 accentLine.Name = "BlueAccentLine"
 accentLine.Size = UDim2.new(1, -20, 0, 3)
 accentLine.Position = UDim2.fromOffset(10, 31)
-accentLine.BackgroundColor3 = Color3.fromRGB(58, 145, 239)
+accentLine.BackgroundColor3 = Color3.fromRGB(225, 45, 58)
 accentLine.BorderSizePixel = 0
 accentLine.ZIndex = 15
 accentLine.Parent = mainFrame
@@ -3943,7 +4025,7 @@ local blueAccent = Instance.new("Frame")
 blueAccent.Name = "BlueAccent"
 blueAccent.Size = UDim2.fromOffset(54, 3)
 blueAccent.Position = UDim2.fromOffset(10, 31)
-blueAccent.BackgroundColor3 = Color3.fromRGB(7, 15, 31)
+blueAccent.BackgroundColor3 = Color3.fromRGB(18, 5, 8)
 blueAccent.BorderSizePixel = 0
 blueAccent.ZIndex = 16
 blueAccent.Parent = mainFrame
@@ -3955,7 +4037,7 @@ local progressGlow = Instance.new("Frame")
 progressGlow.Name = "ProgressGlow"
 progressGlow.Size = UDim2.fromOffset(196, 7)
 progressGlow.Position = UDim2.fromOffset(67, 32)
-progressGlow.BackgroundColor3 = Color3.fromRGB(58, 145, 239)
+progressGlow.BackgroundColor3 = Color3.fromRGB(225, 45, 58)
 progressGlow.BackgroundTransparency = 0.88
 progressGlow.BorderSizePixel = 0
 progressGlow.ZIndex = 19
@@ -3968,7 +4050,7 @@ local marker50 = Instance.new("Frame")
 marker50.Name = "Marker50"
 marker50.Size = UDim2.fromOffset(2, 7)
 marker50.Position = UDim2.fromOffset(165, 32)
-marker50.BackgroundColor3 = Color3.fromRGB(7, 15, 31)
+marker50.BackgroundColor3 = Color3.fromRGB(18, 5, 8)
 marker50.BackgroundTransparency = 0
 marker50.BorderSizePixel = 0
 marker50.ZIndex = 26
@@ -3983,7 +4065,7 @@ markerText.Size = UDim2.fromOffset(24, 10)
 markerText.Position = UDim2.fromOffset(154, 22)
 markerText.BackgroundTransparency = 1
 markerText.Text = "50%"
-markerText.TextColor3 = Color3.fromRGB(58, 145, 239)
+markerText.TextColor3 = Color3.fromRGB(225, 45, 58)
 markerText.TextTransparency = 0
 markerText.Font = Enum.Font.GothamBold
 markerText.TextSize = 7
@@ -3994,10 +4076,10 @@ local statusPill = Instance.new("TextLabel")
 statusPill.Name = "StatusPill"
 statusPill.Size = UDim2.fromOffset(76, 16)
 statusPill.Position = UDim2.fromOffset(194, 47)
-statusPill.BackgroundColor3 = Color3.fromRGB(7, 15, 31)
+statusPill.BackgroundColor3 = Color3.fromRGB(18, 5, 8)
 statusPill.BackgroundTransparency = 0.05
 statusPill.Text = "READY"
-statusPill.TextColor3 = Color3.fromRGB(58, 145, 239)
+statusPill.TextColor3 = Color3.fromRGB(225, 45, 58)
 statusPill.Font = Enum.Font.GothamBold
 statusPill.TextSize = 7
 statusPill.TextXAlignment = Enum.TextXAlignment.Center
@@ -4009,7 +4091,7 @@ pillCorner.CornerRadius = UDim.new(0, 7)
 pillCorner.Parent = statusPill
 
 local pillStroke = Instance.new("UIStroke")
-pillStroke.Color = Color3.fromRGB(7, 15, 31)
+pillStroke.Color = Color3.fromRGB(18, 5, 8)
 pillStroke.Thickness = 1
 pillStroke.Transparency = 0.15
 pillStroke.Parent = statusPill
@@ -4018,10 +4100,10 @@ local badge = Instance.new("TextLabel")
 badge.Name = "AutoBadge"
 badge.Size = UDim2.fromOffset(58, 13)
 badge.Position = UDim2.fromOffset(12, 48)
-badge.BackgroundColor3 = Color3.fromRGB(7, 15, 31)
+badge.BackgroundColor3 = Color3.fromRGB(18, 5, 8)
 badge.BackgroundTransparency = 0.05
 badge.Text = "AUTO GRAB"
-badge.TextColor3 = Color3.fromRGB(58, 145, 239)
+badge.TextColor3 = Color3.fromRGB(225, 45, 58)
 badge.Font = Enum.Font.GothamBold
 badge.TextSize = 6
 badge.BorderSizePixel = 0
@@ -4032,7 +4114,7 @@ badgeCorner.CornerRadius = UDim.new(0, 6)
 badgeCorner.Parent = badge
 
 local mainStroke = Instance.new("UIStroke")
-mainStroke.Color = Color3.fromRGB(58, 145, 239)
+mainStroke.Color = Color3.fromRGB(225, 45, 58)
 mainStroke.Thickness = 1.35
 mainStroke.Transparency = 0.05
 mainStroke.Parent = mainFrame
@@ -4053,7 +4135,7 @@ title.Size = UDim2.fromOffset(130, 18)
 title.Position = UDim2.fromOffset(12, 8)
 title.BackgroundTransparency = 1
 title.Text = "NEXF PUB AUTO GRAB"
-title.TextColor3 = Color3.fromRGB(58, 145, 239)
+title.TextColor3 = Color3.fromRGB(225, 45, 58)
 title.Font = Enum.Font.GothamBold
 title.TextSize = 12
 title.TextXAlignment = Enum.TextXAlignment.Left
@@ -4064,7 +4146,7 @@ local progressBackground = Instance.new("Frame")
 progressBackground.Name = "ProgressBackground"
 progressBackground.Size = UDim2.fromOffset(196, 3)
 progressBackground.Position = UDim2.fromOffset(67, 34)
-progressBackground.BackgroundColor3 = Color3.fromRGB(58, 145, 239)
+progressBackground.BackgroundColor3 = Color3.fromRGB(225, 45, 58)
 progressBackground.BackgroundTransparency = 0.18
 progressBackground.BorderSizePixel = 0
 progressBackground.ZIndex = 21
@@ -4077,7 +4159,7 @@ progressCorner.Parent = progressBackground
 local progressBar = Instance.new("Frame")
 progressBar.Name = "ProgressBar"
 progressBar.Size = UDim2.new(0, 0, 1, 0)
-progressBar.BackgroundColor3 = Color3.fromRGB(58, 145, 239)
+progressBar.BackgroundColor3 = Color3.fromRGB(225, 45, 58)
 progressBar.BorderSizePixel = 0
 progressBar.ZIndex = 22
 progressBar.Parent = progressBackground
@@ -4088,8 +4170,8 @@ progressBarCorner.Parent = progressBar
 local progressGradient = Instance.new("UIGradient")
 progressGradient.Color = ColorSequence.new({
     ColorSequenceKeypoint.new(0, Color3.fromRGB(30, 105, 210)),
-    ColorSequenceKeypoint.new(0.55, Color3.fromRGB(58, 145, 239)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(7, 15, 31)),
+    ColorSequenceKeypoint.new(0.55, Color3.fromRGB(225, 45, 58)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(18, 5, 8)),
 })
 progressGradient.Parent = progressBar
 
@@ -4099,7 +4181,7 @@ brainrotStatusLabel.Size = UDim2.fromOffset(196, 13)
 brainrotStatusLabel.Position = UDim2.fromOffset(67, 48)
 brainrotStatusLabel.BackgroundTransparency = 1
 brainrotStatusLabel.Text = "0 brainrots in the server"
-brainrotStatusLabel.TextColor3 = Color3.fromRGB(58, 145, 239)
+brainrotStatusLabel.TextColor3 = Color3.fromRGB(225, 45, 58)
 brainrotStatusLabel.Font = Enum.Font.GothamBold
 brainrotStatusLabel.TextSize = 8
 brainrotStatusLabel.TextXAlignment = Enum.TextXAlignment.Center
@@ -4124,7 +4206,7 @@ statusText.Size = UDim2.fromOffset(84, 15)
 statusText.Position = UDim2.new(1, -94, 0, 25)
 statusText.BackgroundTransparency = 1
 statusText.Text = ""
-statusText.TextColor3 = Color3.fromRGB(58, 145, 239)
+statusText.TextColor3 = Color3.fromRGB(225, 45, 58)
 statusText.Font = Enum.Font.GothamBold
 statusText.TextSize = 8
 statusText.TextXAlignment = Enum.TextXAlignment.Right
@@ -4182,10 +4264,10 @@ local toggleBtn = Instance.new("TextButton")
 toggleBtn.Name = "ToggleBtn"
 toggleBtn.Size = UDim2.fromOffset(56, 20)
 toggleBtn.Position = UDim2.fromOffset(211, 27)
-toggleBtn.BackgroundColor3 = Color3.fromRGB(7, 15, 31)
+toggleBtn.BackgroundColor3 = Color3.fromRGB(18, 5, 8)
 toggleBtn.BackgroundTransparency = 0.05
 toggleBtn.Text = ""
-toggleBtn.TextColor3 = Color3.fromRGB(58, 145, 239)
+toggleBtn.TextColor3 = Color3.fromRGB(225, 45, 58)
 toggleBtn.TextSize = 8
 toggleBtn.Font = Enum.Font.GothamBold
 toggleBtn.TextTransparency = 0
@@ -4201,7 +4283,7 @@ toggleCorner.CornerRadius = UDim.new(0, 8)
 toggleCorner.Parent = toggleBtn
 
 local toggleStroke = Instance.new("UIStroke")
-toggleStroke.Color = Color3.fromRGB(64, 125, 205)
+toggleStroke.Color = Color3.fromRGB(255, 78, 92)
 toggleStroke.Thickness = 1
 toggleStroke.Transparency = 0.15
 toggleStroke.Parent = toggleBtn
@@ -4209,7 +4291,7 @@ toggleStroke.Parent = toggleBtn
 local toggleIndicator = Instance.new("Frame")
 toggleIndicator.Size = UDim2.fromOffset(6, 6)
 toggleIndicator.Position = UDim2.fromOffset(8, 7)
-toggleIndicator.BackgroundColor3 = Color3.fromRGB(58, 145, 239)
+toggleIndicator.BackgroundColor3 = Color3.fromRGB(225, 45, 58)
 toggleIndicator.BackgroundTransparency = 0
 toggleIndicator.Visible = true
 toggleIndicator.Parent = toggleBtn
@@ -4220,7 +4302,7 @@ local centerLine = Instance.new("Frame")
 centerLine.Name = "CenterLine"
 centerLine.Size = UDim2.fromOffset(2, 8)
 centerLine.Position = UDim2.fromOffset(165, 31)
-centerLine.BackgroundColor3 = Color3.fromRGB(58, 145, 239)
+centerLine.BackgroundColor3 = Color3.fromRGB(225, 45, 58)
 centerLine.BackgroundTransparency = 0
 centerLine.BorderSizePixel = 0
 centerLine.Visible = true
@@ -5769,7 +5851,7 @@ U.jobValue.Position = UDim2.fromOffset(9,22)
 U.jobValue.BackgroundTransparency = 1
 U.jobValue.Font = FONT_REGULAR
 U.jobValue.Text = tostring(game.JobId)
-U.jobValue.TextColor3 = Color3.fromRGB(178, 190, 205)
+U.jobValue.TextColor3 = Color3.fromRGB(220, 185, 190)
 U.jobValue.TextSize = 7
 U.jobValue.TextXAlignment = Enum.TextXAlignment.Left
 U.jobValue.TextTruncate = Enum.TextTruncate.AtEnd
@@ -5779,7 +5861,7 @@ U.jobValue.Parent = U.job
 local jobCopy = Instance.new("TextButton")
 jobCopy.Size = UDim2.fromOffset(84,23)
 jobCopy.Position = UDim2.fromOffset(9,61)
-jobCopy.BackgroundColor3 = Color3.fromRGB(58, 145, 239)
+jobCopy.BackgroundColor3 = Color3.fromRGB(225, 45, 58)
 jobCopy.AutoButtonColor = false
 jobCopy.Font = FONT_MAIN
 jobCopy.Text = "Copy ID"
@@ -5793,7 +5875,7 @@ jcc.CornerRadius = UDim.new(0,8)
 jcc.Parent = jobCopy
 
 local jcs = Instance.new("UIStroke")
-jcs.Color = Color3.fromRGB(92, 163, 240)
+jcs.Color = Color3.fromRGB(255, 92, 105)
 jcs.Thickness = 1
 jcs.Transparency = 0.1
 jcs.Parent = jobCopy
@@ -5801,7 +5883,7 @@ jcs.Parent = jobCopy
 local jobRejoin = Instance.new("TextButton")
 jobRejoin.Size = UDim2.fromOffset(84,23)
 jobRejoin.Position = UDim2.fromOffset(97,61)
-jobRejoin.BackgroundColor3 = Color3.fromRGB(58, 145, 239)
+jobRejoin.BackgroundColor3 = Color3.fromRGB(225, 45, 58)
 jobRejoin.AutoButtonColor = false
 jobRejoin.Font = FONT_MAIN
 jobRejoin.Text = "Rejoin"
@@ -5815,7 +5897,7 @@ jrc.CornerRadius = UDim.new(0,8)
 jrc.Parent = jobRejoin
 
 local jrs = Instance.new("UIStroke")
-jrs.Color = Color3.fromRGB(92, 163, 240)
+jrs.Color = Color3.fromRGB(255, 92, 105)
 jrs.Thickness = 1
 jrs.Transparency = 0.1
 jrs.Parent = jobRejoin
